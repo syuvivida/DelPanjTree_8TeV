@@ -31,8 +31,6 @@ tar xvzf /afs/cern.ch/work/s/syu/public/forStudents/src.tgz
 
 cd src
 
-rm -rf DelPanj
-
 git clone git@github.com:syuvivida/DelPanjTree_8TeV.git DelPanj
 
 cd DelPanj
