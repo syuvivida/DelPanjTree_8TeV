@@ -17,38 +17,71 @@ photonTree::~photonTree(){
 
 void photonTree::Fill(const edm::Event& iEvent){
   Clear();
-  edm::Handle<reco::VertexCollection> recVtxs;
-  iEvent.getByLabel(recVtxsLabel_, recVtxs);
-
-  edm::Handle<double> rhoHandle_enReg;
-  iEvent.getByLabel(edm::InputTag("kt6PFJets","rho"), rhoHandle_enReg); 
-  rho2012_ = *(rhoHandle_enReg.product());
-
-  edm::Handle<reco::GsfElectronCollection>  gsfElectronHandle;
-  iEvent.getByLabel(gsfElectronLabel_, gsfElectronHandle);
-
-  edm::Handle<reco::ConversionCollection> convH;
-  iEvent.getByLabel(convLabel_, convH);
-
-  edm::Handle<reco::BeamSpot> beamSpotHandle;
-  iEvent.getByLabel(beamSpotLabel_, beamSpotHandle);
-
 
   //fetch the input collection
   edm::Handle<std::vector<pat::Photon> > photonHandle;
-  if(not iEvent.getByLabel(photonLabel_,photonHandle)){
-    std::cout<<"FATAL EXCEPTION: "<<"Following Not Found: "<<photonLabel_<<std::endl; 
-    exit(0);
-  }  
+  if(not iEvent.getByLabel(photonLabel_,photonHandle))
+    {
+      std::cout<<"FATAL EXCEPTION: "<<"Following Not Found: "<<photonLabel_<<std::endl; 
+      return;
+    }  
   pat::PhotonCollection phColl(*(photonHandle.product()));
 
- //sort the objects by transverse momentum
-  std::sort(phColl.begin(),phColl.end(),PtGreater());
+
+  edm::Handle<reco::VertexCollection> recVtxs;
+  if(not iEvent.getByLabel(recVtxsLabel_, recVtxs))
+    {
+      std::cout<<"FATAL EXCEPTION: "<<"Following Not Found: "<<recVtxsLabel_<<std::endl; 
+      return;
+    }
+
+
+  edm::Handle<double> rhoHandle_enReg;
+  if(not iEvent.getByLabel(edm::InputTag("kt6PFJets","rho"), rhoHandle_enReg))
+    {
+      std::cout<<"FATAL EXCEPTION: "<<"Following Not Found: "<< "kt6PFJets rho"<<std::endl; 
+      return; 
+    }
+  rho2012_ = *(rhoHandle_enReg.product());
+
+
+  edm::Handle<reco::GsfElectronCollection>  gsfElectronHandle;
+  if(not iEvent.getByLabel(gsfElectronLabel_, gsfElectronHandle))
+    {
+      std::cout<<"FATAL EXCEPTION: "<<"Following Not Found: "<< gsfElectronLabel_ <<std::endl; 
+      return;
+    }
+
+
+  edm::Handle<reco::ConversionCollection> convH;
+  if(not iEvent.getByLabel(convLabel_, convH))
+    {
+      std::cout<<"FATAL EXCEPTION: "<<"Following Not Found: "<< convLabel_ <<std::endl; 
+      return;
+    }
+
+
+  edm::Handle<reco::BeamSpot> beamSpotHandle;
+  if(not  iEvent.getByLabel(beamSpotLabel_, beamSpotHandle))
+    {
+      std::cout<<"FATAL EXCEPTION: "<<"Following Not Found: "<< beamSpotLabel_ <<std::endl; 
+      return;
+    }
+
 
 
   // for particle-flow isolation
   edm::Handle<reco::PFCandidateCollection> pfCandidates;
-  iEvent.getByLabel(pfCandidatesLabel_, pfCandidates);
+  if(not iEvent.getByLabel(pfCandidatesLabel_, pfCandidates))
+    {
+      std::cout<<"FATAL EXCEPTION: "<<"Following Not Found: "<< pfCandidatesLabel_ <<std::endl; 
+      return;
+    }
+
+
+ //sort the objects by transverse momentum
+  std::sort(phColl.begin(),phColl.end(),PtGreater());
+
 
   const reco::PFCandidateCollection thePfColl = *(pfCandidates.product());
   PFIsolationEstimator isolator;
