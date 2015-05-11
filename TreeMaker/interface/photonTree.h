@@ -53,7 +53,9 @@ class photonTree : public baseTree{
   //variables which would become branches
   Float_t rho2012_;
   Int_t nPho_;
+  std::vector<Float_t> phoE_;
   std::vector<Float_t> phoEt_;
+  std::vector<Float_t> phoEta_;
   std::vector<Float_t> phoSCEta_;
   std::vector<Float_t> phoPhi_;  
   std::vector<Int_t>   phoEleVeto_;

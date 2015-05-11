@@ -94,7 +94,9 @@ void photonTree::Fill(const edm::Event& iEvent){
     nPho_++;
     edm::Ptr<reco::Candidate> recoPhoRef = ph->originalObjectRef();
     const reco::Photon *recoPhoton = dynamic_cast<const reco::Photon *>(recoPhoRef.get());
+    phoE_.push_back(ph->energy());
     phoEt_.push_back(ph->et());
+    phoEta_.push_back(ph->eta());
     phoSCEta_.push_back(ph->superCluster()->eta());
     phoPhi_.push_back(ph->phi());
     phoEleVeto_.push_back((int)ConversionTools::hasMatchedPromptElectron(recoPhoton->superCluster(), gsfElectronHandle, convH, beamSpotHandle->position()));
@@ -117,7 +119,9 @@ void photonTree::Fill(const edm::Event& iEvent){
 void photonTree::SetBranches(){
   AddBranch(&rho2012_,"phoRho2012");
   AddBranch(&nPho_,"nPho");
+  AddBranch(&phoE_,"phoE");
   AddBranch(&phoEt_,"phoEt");
+  AddBranch(&phoEta_,"phoEta");
   AddBranch(&phoSCEta_,"phoSCEta");
   AddBranch(&phoPhi_,"phoPhi");
   AddBranch(&phoEleVeto_,"phoEleVeto");
@@ -135,7 +139,9 @@ void photonTree::SetBranches(){
 void photonTree::Clear(){
   rho2012_ = 0.;
   nPho_ = 0; 
+  phoE_.clear(); 
   phoEt_.clear();
+  phoEta_.clear();
   phoSCEta_.clear();
   phoPhi_.clear();
   phoEleVeto_.clear();
