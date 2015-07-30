@@ -1,5 +1,6 @@
 #include "DelPanj/TreeMaker/interface/genInfoTree.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenRunInfoProduct.h"
+#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h"
 
 genInfoTree::genInfoTree(std::string name, TTree* tree, const edm::ParameterSet& iConfig):
   baseTree(name,tree)
@@ -24,6 +25,34 @@ genInfoTree::Fill(const edm::Event& iEvent)
 {
   Clear();
   if(iEvent.isRealData())return;
+
+  // add HT information
+  edm::Handle<LHEEventProduct> evt;
+  HT_=0;
+  if(iEvent.getByLabel( "externalLHEProducer", evt )){
+    
+    const lhef::HEPEUP hepeup_ = evt->hepeup();
+
+    const int nup_ = hepeup_.NUP; 
+    const std::vector<int> idup_ = hepeup_.IDUP;
+    const std::vector<lhef::HEPEUP::FiveVector> pup_ = hepeup_.PUP;
+    const std::vector<int> istup_ = hepeup_.ISTUP;
+
+    for ( unsigned int icount = 0 ; icount < (unsigned int)nup_; icount++ ) {
+
+      int PID    = idup_[icount];
+      int status = istup_[icount];
+      double px = (pup_[icount])[0];
+      double py = (pup_[icount])[1];
+            
+      if(status!=1)continue;
+      // if it's not a gluon or quark
+      if(!(abs(PID)==21 || (abs(PID)<6 && abs(PID)>0)))continue;
+      HT_ += sqrt(px*px+py*py);
+    
+    } // end of loop over particles
+  }
+
 
   using namespace edm;
   edm::Handle<reco::GenParticleCollection> genParticleHandle;
@@ -142,6 +171,9 @@ genInfoTree::SetBranches(){
 
   AddBranch(&ptHat_, "ptHat");
   AddBranch(&mcWeight_, "mcWeight");
+
+  AddBranch(&HT_, "HT");
+
   AddBranch(&nGenPar_, "nGenPar");
   AddBranch(&genParE_, "genParE");
   AddBranch(&genParPt_, "genParPt");
@@ -175,6 +207,8 @@ genInfoTree::Clear(){
 
   ptHat_ = -9999.0;
   mcWeight_ = -9999.0; 
+
+  HT_ = 0;
 
   nGenPar_ =0;
   genParE_.clear();

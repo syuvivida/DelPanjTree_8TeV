@@ -42,6 +42,8 @@ class genInfoTree : public baseTree{
   Float_t ptHat_;      // added by Eiko
   Float_t mcWeight_;   // added by Eiko
 
+  Float_t HT_;
+
   Int_t nGenPar_;
   std::vector<Float_t> genParE_;
   std::vector<Float_t> genParPt_;
