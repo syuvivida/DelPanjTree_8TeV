@@ -4,7 +4,7 @@ git clone git@github.com:syuvivida/DelPanjTree_8TeV.git DelPanj
 
 cd DelPanj
 
-git checkout v0.00
+git checkout v0.10
 
 #### To commit
 
@@ -14,9 +14,9 @@ git add xxxx
 
 git commit -m "remove lines"
 
-git pull --rebase upstream v0.00
+git pull --rebase upstream v0.10
 
-git push origin v0.00
+git push origin v0.10
 
 
 #### To run
@@ -35,7 +35,7 @@ git clone git@github.com:syuvivida/DelPanjTree_8TeV.git DelPanj
 
 cd DelPanj
 
-git checkout v0.00
+git checkout v0.10
 
 cd -
 
