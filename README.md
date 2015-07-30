@@ -1,8 +1,8 @@
 ### To check out
 
-git clone git@github.com:syuvivida/DelPanjTree_8TeV.git
+git clone git@github.com:syuvivida/DelPanjTree_8TeV.git DelPanj
 
-cd DelPanjTree_8TeV
+cd DelPanj
 
 git checkout v0.00
 
