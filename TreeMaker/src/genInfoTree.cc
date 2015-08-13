@@ -28,9 +28,8 @@ genInfoTree::Fill(const edm::Event& iEvent)
 
   // add HT information
   edm::Handle<LHEEventProduct> evt;
-  HT_=0;
-  if(iEvent.getByLabel( "externalLHEProducer", evt )){
-    
+  if(iEvent.getByLabel( "externalLHEProducer", evt )){ 
+    HT_=0;
     const lhef::HEPEUP hepeup_ = evt->hepeup();
 
     const int nup_ = hepeup_.NUP; 
@@ -63,14 +62,23 @@ genInfoTree::Fill(const edm::Event& iEvent)
 	       <<std::endl;
     }
 
-  edm::Handle<GenEventInfoProduct>    genEventScale;
+  edm::Handle<GenEventInfoProduct>    genEventInfoHandle;
 
-  if (iEvent.getByLabel("generator", genEventScale)) {
-    if (genEventScale->hasBinningValues())
-      ptHat_ = genEventScale->binningValues()[0];
+  if (iEvent.getByLabel("generator", genEventInfoHandle)) {
+    if (genEventInfoHandle->hasBinningValues())
+      ptHat_ = genEventInfoHandle->binningValues()[0];
       
-    mcWeight_ = genEventScale->weight();
+    mcWeight_ = genEventInfoHandle->weight();
 
+    if (genEventInfoHandle->pdf()) {
+      pdf_.push_back(genEventInfoHandle->pdf()->id.first);    // PDG ID of incoming parton #1
+      pdf_.push_back(genEventInfoHandle->pdf()->id.second);   // PDG ID of incoming parton #2
+      pdf_.push_back(genEventInfoHandle->pdf()->x.first);     // x value of parton #1
+      pdf_.push_back(genEventInfoHandle->pdf()->x.second);    // x value of parton #2
+      pdf_.push_back(genEventInfoHandle->pdf()->xPDF.first);  // PDF weight for parton #1
+      pdf_.push_back(genEventInfoHandle->pdf()->xPDF.second); // PDF weight for parton #2
+      pdf_.push_back(genEventInfoHandle->pdf()->scalePDF);    // scale of the hard interaction
+    }
   }
 
   unsigned int genIndex=0;
@@ -173,7 +181,7 @@ genInfoTree::SetBranches(){
   AddBranch(&mcWeight_, "mcWeight");
 
   AddBranch(&HT_, "HT");
-
+  AddBranch(&pdf_, "pdf");
   AddBranch(&nGenPar_, "nGenPar");
   AddBranch(&genParE_, "genParE");
   AddBranch(&genParPt_, "genParPt");
@@ -208,7 +216,9 @@ genInfoTree::Clear(){
   ptHat_ = -9999.0;
   mcWeight_ = -9999.0; 
 
-  HT_ = 0;
+  HT_ = -9999.0;
+
+  pdf_.clear();
 
   nGenPar_ =0;
   genParE_.clear();
